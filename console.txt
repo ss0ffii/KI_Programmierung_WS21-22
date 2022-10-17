@@ -1,0 +1,252 @@
+>>> from boolExpression import *
+
+pytest --doctest-modules
+
+>>> print(LessThan(Var('y'), Var('x')).eval_(env))
+False
+
+>>> print(LessThan(Var('y'), Con(8)).eval_(env))
+True
+
+>>> print(LessThan(Var('y'), Con(1)).eval_(env))
+False
+
+>>> print(LessThan(Var('y'), Con(1)).eval_(env))
+False
+
+                    >>> ParseInt().parse("007abc") 
+                    [(7, 'abc')]
+
+                    >>> ParseInt().parse("--007abc") 
+                    []
+
+                    >>> ParseInt().parse("-007abc")  
+                    [(-7, 'abc')]
+
+>>> ParseTimes().parse('5*4')  
+[(<arithmExpression.Times object at 0x000001F484EFC588>, '')]
+
+                    >>> ParseParens().parse('(())') 
+                    [('(())', '')]
+
+>>> print(Equal(Var('y'), Var('x')).eval_(env)) 
+True
+
+>>> print(Equal(Var('y'), Var('x')).eval_(env))
+False
+
+>>> print(result(ParsePlus().parse('x + 7')))
+(x + 7)
+
+>>> print(result(ParseTimes().parse('x * 7'))) 
+(x * 7)
+
+>>> print(result(ParseArithmExpr().parse('x * 7')))  
+(x * 7)
+
+>>> print(result(ParseArithmExpr().parse('3 + x * 7')))  
+(3 + (x * 7))
+
+>>> print(result(ParseArithmExpr().parse('( 3*y*8 +2*x ) ')))  
+((3 * (y * 8)) + (2 * x))
+
+>>> print(result(ParseArithmExpr().parse('   (  3 *y*8 +2*x ) ')))  
+((3 * (y * 8)) + (2 * x))
+
+
+
+
+
+
+>>> Or(Var('P'), Or(And(Var('Q'), Var('R')), Var('P')))  
+<boolExpression.Or object at 0x0000022ACD47C8C8>
+
+>>> Or(Var('P'), Or(And(Var('Q'), Var('R')), Var('P'))).eval_({'P':True, 'Q':False, 'R':True}) 
+True
+
+>>> Or(Var('P'), Or(And(Var('Q'), Var('R')), Var('P'))).eval_({'P':False, 'Q':False, 'R':True}) 
+False
+
+>>> Or(Var('P'), Or(And(Var('Q'), Var('R')), Var('P'))).eval_({'P':False, 'Q':True, 'R':True})  
+True
+
+>>> Equal(Var('P'), Var('Q')).eval_({'P':False, 'Q':True})
+False
+
+>>> Equal(Var('P'), Var('Q')).eval_({'P':False, 'Q':False}) 
+True
+
+>>> Equal(Con('P'), Con('Q')).eval_({'P':4, 'Q':4})         
+False
+
+>>> Equal(Con('P'), Con('Q')).eval_({'P':4, 'Q':5}) 
+False
+
+>>> Equal(Con('P'), Con('P')).eval_({'P':4, 'Q':5}) 
+True
+
+>>> Equal(Con(5), Var('P')).eval_({'P':4, 'Q':5}) 
+False
+
+>>> Equal(Con(5), Var('Q')).eval_({'P':4, 'Q':5}) 
+True
+
+>>> LessThan(Var('P'), Var('Q')).eval_({'P':4, 'Q':5})
+True
+
+>>> LessThan(Con(3), Var('Q')).eval_({'P':4, 'Q':5})   
+True
+
+>>> LessThan(Con(5), Var('Q')).eval_({'P':4, 'Q':5})
+False
+
+>>> LessThan(Con(4), Var('Q')).eval_({'P':4, 'Q':5}) 
+True
+
+>>> LessThan(Con(4), Var('P')).eval_({'P':4, 'Q':5}) 
+False
+
+
+
+>>> print(result(ParseBoolExpr().parse('x and y')))
+(x and y)
+
+>>> print(result(ParseBoolExpr().parse('x = y')))
+(x = y)
+
+>>> print(result(ParseBoolExpr().parse('x or y')))
+(x or y)
+
+>>> print(result(ParseBoolExpr().parse('x < 15 and 7 < x')))
+((x < 15) and (7 < x))
+
+>>> print(result(ParseExpression().parse('x < y'))) 
+(x < y)
+
+>>> print(result(ParseExpression().parse('x = 3')))
+(x = 3)
+
+>>> print(result(ParseExpression().parse('3 < y')))
+(3 < y)
+
+>>> print(result(ParseExpression().parse('x * y')))
+(x * y)
+
+>>> print(result(ParseExpression().parse('x + y')))
+(x + y)
+
+>>> print(result(ParseExpression().parse('x < y'))) 
+(x < y)
+
+>>> print(result(ParseExpression().parse('x + y'))) 
+(x + y)
+
+>>> print(result(ParseExpression().parse('x and y')))  
+(x and y)
+
+>>> print(result(ParseExpression().parse('x or y')))   
+(x or y)
+
+>>> print(result(ParseExpression().parse('x = 9')))   
+(x = 9)
+
+>>> print(result(ParseExpression().parse('6 < y')))    
+(6 < y)
+
+
+
+
+
+
+
+
+
+>>> printExpr("x + 2*y < 15 + x * x or z = 5")
+(((x + (2 * y)) < (15 + (x * x))) or (z = 5))
+
+>>> printExpr("(x + 2*y < 15 + x * x) or z = 5")
+(((x + (2 * y)) < (15 + (x * x))) or (z = 5))
+
+>>> printExpr("x < 2 and y < 1")
+((x < 2) and (y < 1))
+
+>>> printExpr("x + 2 * y")
+(x + (2 * y))
+
+>>> printExpr("x = y")
+(x = y)
+
+
+
+
+
+>>> env = {'x':1, 'y':2, 'z':3}
+>>> evalExpr("x = y", env)
+False
+
+>>> evalExpr("x + 2 * y", env)
+5
+
+>>> evalExpr("x < 2 and y < 1", env)
+False
+
+>>> evalExpr("(x + 2*y < 15 + x * x) or z = 5", env)
+True
+
+>>> evalExpr("x + 2*y < 15 + x * x or z = 5", env)
+True
+
+>>> evalExpr("x * 2 + 3 < x * (2 + 3)", env)
+False
+
+>>> evalExpr("y * 2 + 3 < y * (2 + 3)", env)
+True
+
+
+
+boolVar -> im z3 ist "Bool"
+
+arithVar -> im z3 ist "Real"
+
+Man kann z3 eine Liste von Bedingungen geben
+
+
+
+
+
+"""        for e in i:
+            print(f'i: {i}')
+            print(f'type(e): {type(e)}, e: {e}')
+            if type(e) == str:
+                if e.isalpha():
+                    val = Int(f'{e}')
+                print(f'typeVal: {type(val)}, val: {val}')"""
+            
+
+
+    """for e in exprs:
+        #expr = printExpr(e)
+        #print(f'expr: {expr}')
+        print(f'e: {e}')
+        exprZ3 = e.toZ3()
+        #print(f'exprZ3: {exprZ3}')
+        s.add(exprZ3)"""
+
+
+from z3 import *                     
+from expression import solveZ3
+solveZ3(["x + y + z = 10", "x < y"])
+
+
+
+
+solution = []
+        model = s.model()
+        for e in model[e]:
+            print(f"model type:v{type(model)}")
+            print(model)
+            print(e)
+            print("/")
+            #e = str(e)
+            #solution.append(e)
+            #return solution
